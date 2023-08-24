@@ -1,7 +1,7 @@
 {
-  "name": "cats-for-data",
+  "name": "cute-trap",
   "version": "1.0.0",
-  "description": "Gives cats, takes IP",
+  "description": "Gives cute, takes fingerprint",
   "main": "src/index.js",
   "license": "MIT",
   "private": true,
