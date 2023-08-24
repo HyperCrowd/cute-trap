@@ -1,0 +1,21 @@
+{
+  "name": "cats-for-data",
+  "version": "1.0.0",
+  "description": "Gives cats, takes IP",
+  "main": "src/index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.1",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
+    "eslint-plugin-promise": "^6.0.0"
+  },
+  "dependencies": {
+    "ua-parser-js": "^1.0.35"
+  }
+}
