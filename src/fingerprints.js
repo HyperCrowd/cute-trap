@@ -49,8 +49,9 @@ exports.addFingerprint = async function (body, req, url, identifier) {
 
   // Process the fingerprint data
   const request = {
+    id: identifier,
     fingerprints: fingerprintData,
-    time: Date.now(),
+    time: new Date().toISOString(),
     ip,
     browserInfo,
     url,
@@ -59,9 +60,7 @@ exports.addFingerprint = async function (body, req, url, identifier) {
     forwardedProto
   }
 
-  console.log(identifier)
-  console.log(request)
-  console.log('===')
+  console.log(JSON.stringify(request))
 
   if (fingerprints[identifier] === undefined) {
     fingerprints[identifier] = []
