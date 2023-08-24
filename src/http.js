@@ -1,9 +1,11 @@
 const http = require('http')
 
+const cliPort = parseInt(process.env.PORT) || 3000
+
 /**
  *
  */
-exports.startHttp = async function (router, port = 3000) {
+exports.startHttp = async function (router, port = cliPort) {
   return new Promise(resolve => {
     const server = http.createServer(router)
 
