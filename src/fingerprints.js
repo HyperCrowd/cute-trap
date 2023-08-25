@@ -1,4 +1,5 @@
 const UAParser = require('ua-parser-js')
+const crypto = require('crypto');
 const fs = require('fs')
 
 let fingerprints
@@ -46,6 +47,10 @@ exports.addFingerprint = async function (body, req, url, identifier) {
   const parser = new UAParser()
   parser.setUA(userAgent)
   const browserInfo = parser.getResult()
+
+  fingerprintData.components.canvas.value.geometry = crypto.createHash('md5').update(fingerprintData.components.canvas.value.geometry).digest('hex')
+  fingerprintData.components.canvas.value.text = crypto.createHash('md5').update(fingerprintData.components.canvas.value.text).digest('hex')
+  delete fingerprintData.components.webGlExtensions
 
   // Process the fingerprint data
   const request = {
