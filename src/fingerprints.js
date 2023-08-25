@@ -8,7 +8,7 @@ const { checkShodan } = require('./shodan')
 const { checkVirusTotal } = require('./virustotal')
 const { checkTorrents } = require('./ikwyd')
 const { checkPorts } = require('./nmap')
-const util = require('util')
+const { saveJSONToFile } = require('./file')
 
 let fingerprints
 let shouldSave = false
@@ -37,6 +37,16 @@ async function loadFingerprints (filePath) {
  *
  */
 exports.addFingerprint = async function (body, req, url, identifier) {
+  // Collect forwarded IP (if available)
+
+  const forwardedFor = req.headers['x-forwarded-for']
+  const forwardedIp = forwardedFor ? forwardedFor.split(',')[0] : req.connection.remoteAddress
+
+  // Collect forwarded protocol (if available)
+  const forwardedProto = req.headers['x-forwarded-proto'] || req.connection.encrypted ? 'https' : 'http'
+
+  console.log(`<${identifier} @ ${forwardedIp}> Preparing fingerprint...`)
+
   const fingerprintData = JSON.parse(body || '{}') || {}
 
   // Collect IP
@@ -44,13 +54,6 @@ exports.addFingerprint = async function (body, req, url, identifier) {
 
   // Collect user agent information
   const userAgent = req.headers['user-agent']
-
-  // Collect forwarded IP (if available)
-  const forwardedFor = req.headers['x-forwarded-for']
-  const forwardedIp = forwardedFor ? forwardedFor.split(',')[0] : req.connection.remoteAddress
-
-  // Collect forwarded protocol (if available)
-  const forwardedProto = req.headers['x-forwarded-proto'] || req.connection.encrypted ? 'https' : 'http'
 
   const parser = new UAParser()
   parser.setUA(userAgent)
@@ -109,17 +112,19 @@ exports.addFingerprint = async function (body, req, url, identifier) {
       isp: torrents.isp,
       hasPorno: torrents.hasPorno,
       hasChildPorno: torrents.hasChildPorno,
-      geoData: torrents.geoData
+      geoData: torrents.geoData,
+      contents: torrents.contents
     },
-    torrentContents: torrents.contents,
     isTorExit,
     isVpn,
     ports: ports.ports
   }
 
-  console.log(identifier)
-  const inspect = util.inspect(request, { depth: null })
-  console.log(inspect)
+  const filename = `${identifier}-${fingerprintData.visitorId}.json`
+
+  saveJSONToFile(request, filename)
+
+  console.log(`<${identifier} @ ${forwardedIp}> Fingerprint availible at ${req.headers.origin}/downloads/${filename}`)
 
   if (fingerprints[identifier] === undefined) {
     fingerprints[identifier] = []

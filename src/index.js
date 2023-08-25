@@ -5,6 +5,8 @@ const { addFingerprint, startFingerprints } = require('./fingerprints')
 const { getHtml } = require('./html')
 const { getJs } = require('./js')
 const { startHttp } = require('./http')
+const { checkAndOpenJSON } = require('./file')
+const { basename } = require('path')
 
 async function main () {
   startFingerprints()
@@ -53,8 +55,22 @@ async function main () {
        *
        */
       default:
-        res.statusCode = 404
-        res.end('Not Found')
+        if (parsedUrl.pathname.slice(0, 11) === '/downloads/') {
+          const filename = basename(parsedUrl.pathname, '.json')
+          const contents = await checkAndOpenJSON(filename)
+
+          if (contents === false) {
+            res.statusCode = 404
+            res.end('Not Found')
+          } else {
+            res.setHeader('Content-Type', 'application/json')
+            res.end(contents)
+          }
+        } else {
+          // File doesn't exist
+          res.statusCode = 404
+          res.end('Not Found')
+        }
         break
     }
   })

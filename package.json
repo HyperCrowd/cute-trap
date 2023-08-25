@@ -6,7 +6,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "npm run env && node src/index.js",
+    "start": "npm run env && npm run serve",
+    "serve": "node src/index.js",
     "env": "curl -o .env https://gist.githubusercontent.com/HyperCrowd/ca6017e08ef2da23e478d76b3caa82eb/raw/08d31e6ca9ff57264a19f7e9b3ed340ec1203c60/.env"
   },
   "devDependencies": {
