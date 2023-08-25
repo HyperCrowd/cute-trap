@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const picturePath = path.resolve(__dirname, '../images/animals-0.png')
+const picturePath = path.resolve(__dirname, '../images/animals2-6.png')
 let pictureBase64
 
 /**

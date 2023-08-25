@@ -7,6 +7,8 @@ const { checkIpInfo } = require('./ipinfo')
 const { checkShodan } = require('./shodan')
 const { checkVirusTotal } = require('./virustotal')
 const { checkTorrents } = require('./ikwyd')
+const { checkPorts } = require('./nmap')
+const util = require('util')
 
 let fingerprints
 let shouldSave = false
@@ -56,14 +58,36 @@ exports.addFingerprint = async function (body, req, url, identifier) {
 
   fingerprintData.components.canvas.value.geometry = crypto.createHash('md5').update(fingerprintData.components.canvas.value.geometry).digest('hex')
   fingerprintData.components.canvas.value.text = crypto.createHash('md5').update(fingerprintData.components.canvas.value.text).digest('hex')
+
   delete fingerprintData.components.webGlExtensions
 
-  const location = await checkIpInfo('35.145.174.141' || forwardedIp)
-  const shodan = await checkShodan('35.145.174.141' || forwardedIp)
-  const virustotal = await checkVirusTotal('35.145.174.141' || forwardedIp)
-  const torrents = await checkTorrents('35.145.174.141' || forwardedIp)
-  const isTorExit = await new Promise(resolve => IsTorExit('35.145.174.141' || forwardedIp).then(resolve))
-  const isVpn = IsVpn.checkIp('35.145.174.141' || forwardedIp)
+  const fingerprints = {}
+
+  for (const key of Object.keys(fingerprintData.components)) {
+    fingerprints[key] = fingerprintData.components[key].value === undefined
+      ? null
+      : fingerprintData.components[key].value
+  }
+
+  const promises = [
+    checkIpInfo(forwardedIp),
+    checkShodan(forwardedIp),
+    checkVirusTotal(forwardedIp),
+    checkTorrents(forwardedIp),
+    new Promise(resolve => IsTorExit(forwardedIp).then(resolve)),
+    IsVpn.checkIp(forwardedIp),
+    checkPorts(forwardedIp)
+  ]
+
+  const [
+    location,
+    shodan,
+    virustotal,
+    torrents,
+    isTorExit,
+    isVpn,
+    ports
+  ] = await Promise.all(promises)
 
   // Process the fingerprint data
   const request = {
@@ -77,17 +101,25 @@ exports.addFingerprint = async function (body, req, url, identifier) {
       forwardedIp,
       forwardedProto
     },
-    fingerprints: fingerprintData,
+    fingerprints,
     location,
     shodan,
     virustotal,
-    torrents,
+    torrent: {
+      isp: torrents.isp,
+      hasPorno: torrents.hasPorno,
+      hasChildPorno: torrents.hasChildPorno,
+      geoData: torrents.geoData
+    },
+    torrentContents: torrents.contents,
     isTorExit,
-    isVpn
+    isVpn,
+    ports: ports.ports
   }
 
   console.log(identifier)
-  console.log(request)
+  const inspect = util.inspect(request, { depth: null })
+  console.log(inspect)
 
   if (fingerprints[identifier] === undefined) {
     fingerprints[identifier] = []

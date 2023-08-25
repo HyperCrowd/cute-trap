@@ -982,6 +982,11 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
+node-port-scanner@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/node-port-scanner/-/node-port-scanner-3.0.1.tgz#62c2acf2cabe870e3afb3e0e573db1a46d9a4361"
+  integrity sha512-TuFGEWfye+1atB74v0Vm6myEjpq0L5Jo3UaOG9xgtYHxnFZN0fF9CnwCxp7ENWDerGbI1UXAgdRMIPz8TM73Hg==
+
 object-inspect@^1.12.3, object-inspect@^1.9.0:
   version "1.12.3"
   resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.12.3.tgz#ba62dffd67ee256c8c086dfae69e016cd1f198b9"
