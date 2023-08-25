@@ -65,7 +65,7 @@ exports.addFingerprint = async function (body, req, url, identifier) {
     forwardedProto
   }
 
-  console.log(JSON.stringify(request))
+  console.log(request)
 
   if (fingerprints[identifier] === undefined) {
     fingerprints[identifier] = []
