@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const { URL } = require('url')
 const { addFingerprint, startFingerprints } = require('./fingerprints')
 const { getHtml } = require('./html')

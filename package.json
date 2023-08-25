@@ -16,6 +16,9 @@
     "eslint-plugin-promise": "^6.0.0"
   },
   "dependencies": {
+    "dotenv": "^16.3.1",
+    "istorexit": "^0.10.1",
+    "static-vpn-check": "^1.1.0",
     "ua-parser-js": "^1.0.35"
   }
 }

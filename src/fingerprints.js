@@ -1,6 +1,12 @@
+const IsTorExit = require('istorexit')
+const IsVpn = require('static-vpn-check')
 const UAParser = require('ua-parser-js')
-const crypto = require('crypto');
+const crypto = require('crypto')
 const fs = require('fs')
+const { checkIpInfo } = require('./ipinfo')
+const { checkShodan } = require('./shodan')
+const { checkVirusTotal } = require('./virustotal')
+const { checkTorrents } = require('./ikwyd')
 
 let fingerprints
 let shouldSave = false
@@ -52,17 +58,32 @@ exports.addFingerprint = async function (body, req, url, identifier) {
   fingerprintData.components.canvas.value.text = crypto.createHash('md5').update(fingerprintData.components.canvas.value.text).digest('hex')
   delete fingerprintData.components.webGlExtensions
 
+  const location = await checkIpInfo('35.145.174.141' || forwardedIp)
+  const shodan = await checkShodan('35.145.174.141' || forwardedIp)
+  const virustotal = await checkVirusTotal('35.145.174.141' || forwardedIp)
+  const torrents = await checkTorrents('35.145.174.141' || forwardedIp)
+  const isTorExit = await new Promise(resolve => IsTorExit('35.145.174.141' || forwardedIp).then(resolve))
+  const isVpn = IsVpn.checkIp('35.145.174.141' || forwardedIp)
+
   // Process the fingerprint data
   const request = {
-    id: identifier,
+    request: {
+      id: identifier,
+      time: new Date().toISOString(),
+      ip,
+      agent: browserInfo,
+      url,
+      headers: req.headers,
+      forwardedIp,
+      forwardedProto
+    },
     fingerprints: fingerprintData,
-    time: new Date().toISOString(),
-    ip,
-    browserInfo,
-    url,
-    headers: req.headers,
-    forwardedIp,
-    forwardedProto
+    location,
+    shodan,
+    virustotal,
+    torrents,
+    isTorExit,
+    isVpn
   }
 
   console.log(identifier)
