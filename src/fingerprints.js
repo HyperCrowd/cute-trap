@@ -117,7 +117,7 @@ exports.addFingerprint = async function (body, req, url, identifier) {
     },
     isTorExit,
     isVpn,
-    ports: ports.ports
+    openPorts: ports.ports.open
   }
 
   const filename = `${identifier}-${fingerprintData.visitorId}.json`
